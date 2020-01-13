@@ -5,31 +5,38 @@
  * Released under the MIT License.
  */
 
-'use strict';
-
-var isObject = require('isobject');
-var has = require('has-value');
-
-module.exports = function unset(obj, prop) {
-  if (!isObject(obj)) {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+  return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const isobject_1 = __importDefault(require("isobject"));
+const split_string_1 = __importDefault(require("split-string"));
+function _unset(obj, paths) {
+  if (!isobject_1.default(obj)) {
     throw new TypeError('expected an object.');
   }
-
-  var isArray = Array.isArray(prop);
-
-  if (!isArray && obj.hasOwnProperty(prop)) {
-    delete obj[prop];
-    return true;
+  if (!Array.isArray(paths)) {
+    paths = split_string_1.default(paths);
   }
-
-  if (has(obj, prop)) {
-    var segs = isArray ? prop.slice() : prop.split('.');
-    var last = segs.pop();
-    while (segs.length && segs[segs.length - 1].slice(-1) === '\\') {
-      last = segs.pop().slice(0, -1) + '.' + last;
+  else {
+    paths = paths.slice();
+  }
+  let prop;
+  let target = obj;
+  let latest = paths.pop();
+  for (prop of paths) {
+    if (prop in target) {
+      target = target[prop];
     }
-    while (segs.length) obj = obj[prop = segs.shift()];
-    return (delete obj[last]);
+    else {
+      return true;
+    }
+  }
+  if (latest in target) {
+    return (delete target[latest]);
   }
   return true;
-};
+}
+module.exports = _unset;
+exports.default = _unset;

@@ -43,8 +43,14 @@ describe('unset', function () {
 
   it('should delete...:', function () {
     var three = {'a.b': 'c', d: 'e'};
-    unset(three, 'a.b');
+    unset(three, 'a\\.b');
     three.should.eql({d: 'e'});
+  });
+
+  it('should not delete...:', function () {
+    var three = {'a.b': 'c', d: 'e'};
+    unset(three, 'a.b');
+    three.should.eql({'a.b': 'c', d: 'e'});
   });
 
   it('should delete nested escaped values:', function () {
@@ -101,6 +107,18 @@ describe('input path as array paths', function () {
     var three = {'a.b': 'c', d: 'e'};
     unset(three, ['a.b']);
     three.should.eql({d: 'e'});
+  });
+
+  it('should not delete...:', function () {
+    var three = {'a.b': 'c', d: 'e'};
+    unset(three, ['a', 'b']);
+    three.should.eql({'a.b': 'c', d: 'e'});
+  });
+
+  it('should not delete...:', function () {
+    var three = {'a.b': 'c', d: 'e'};
+    unset(three, ['a\\.b']);
+    three.should.eql({'a.b': 'c', d: 'e'});
   });
 
   it('should delete nested escaped values:', function () {
